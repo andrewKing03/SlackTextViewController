@@ -97,7 +97,7 @@ static NSString *const SLKTextViewGenericFormattingSelectorPrefix = @"slk_format
     CGFloat height = self.font.lineHeight;
     height += self.textContainerInset.top + self.textContainerInset.bottom;
     
-    return CGSizeMake(UIViewNoIntrinsicMetric, height);
+    return CGSizeMake(UIViewNoIntrinsicMetric, (height < 39) ? 39: height);
 }
 
 + (BOOL)requiresConstraintBasedLayout
