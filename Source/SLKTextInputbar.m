@@ -90,8 +90,9 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
 
     [self addSubview:self.editorContentView];
     [self addSubview:self.leftButton];
-    [self addSubview:self.rightButton];
     [self addSubview:self.textView];
+    [self addSubview:self.rightButton];
+    
     [self addSubview:self.charCountLabel];
     [self addSubview:self.contentView];
 
@@ -379,8 +380,8 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
             return 0.0;
         }
     }
-
-    return [self.rightButton intrinsicContentSize].width;
+    CGFloat width = [self.rightButton intrinsicContentSize].width;
+    return (width < 49.0) ? 49 : width;
 }
 
 - (CGFloat)slk_appropriateRightButtonMargin
@@ -391,7 +392,7 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
         }
     }
     
-    return self.contentInset.right;
+    return self.contentInset.right + 6.0;
 }
 
 - (NSUInteger)slk_defaultNumberOfLines
@@ -427,7 +428,7 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     
     self.rightButtonWC.constant = [self slk_appropriateRightButtonWidth];
     self.rightMarginWC.constant = [self slk_appropriateRightButtonMargin];
-
+    self.textView.textContainerInset = UIEdgeInsetsMake(12, 16, 12, ([self slk_appropriateRightButtonWidth] + [self slk_appropriateRightButtonMargin] + 26));
     [self layoutIfNeeded];
 }
 
@@ -660,13 +661,14 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
                               @"bottom" : @(self.contentInset.bottom)
                               };
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(left)-[leftButton(0)]-(<=left)-[textView]-(right)-[rightButton(0)]-(right)-|" options:0 metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[rightButton(0)]-(0)-|" options:NSLayoutFormatAlignAllTrailing metrics:metrics views:@{@"textView": self.textView, @"rightButton": self.rightButton}]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(left)-[leftButton(0)]-(<=left)-[textView]-(16)-|" options:0 metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[leftButton(0)]-(0@750)-|" options:0 metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[rightButton]-(<=0)-|" options:0 metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[rightButton]-(26)-|" options:0 metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(left@250)-[charCountLabel(<=50@1000)]-(right@750)-|" options:0 metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-8-[textView(>=30@999)]-(<=bottom)-[editorContentView(0)]-(8)-|" options:0 metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-8-[textView(>=30@999)]-(1)-[editorContentView(0)]-(8)-|" options:0 metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[editorContentView]|" options:0 metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[contentView]|" options:0 metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[contentView]-(16)-|" options:0 metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[contentView(0)]|" options:0 metrics:metrics views:views]];
 
     self.textViewBottomMarginC = [self slk_constraintForAttribute:NSLayoutAttributeBottom firstItem:self secondItem:self.textView];
