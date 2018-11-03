@@ -1404,10 +1404,6 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     // Stores the previous keyboard height
     CGFloat previousKeyboardHeight = self.keyboardHC.constant;
     
-    // Updates the height constraints' constants
-    self.keyboardHC.constant = [self slk_appropriateKeyboardHeightFromNotification:notification];
-    self.scrollViewHC.constant = [self slk_appropriateScrollViewHeight];
-    
     // Updates and notifies about the keyboard status update
     if ([self slk_updateKeyboardStatus:status]) {
         // Posts custom keyboard notification, if logical conditions apply
@@ -1504,6 +1500,10 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
         // Posts custom keyboard notification, if logical conditions apply
         [self slk_postKeyboarStatusNotification:notification];
     }
+    
+    // Updates the height constraints' constants
+    self.keyboardHC.constant = [self slk_appropriateKeyboardHeightFromNotification:notification];
+    self.scrollViewHC.constant = [self slk_appropriateScrollViewHeight];
     
     // After showing keyboard, check if the current cursor position could diplay autocompletion
     if ([self.textView isFirstResponder] && status == SLKKeyboardStatusDidShow && !self.isAutoCompleting) {
